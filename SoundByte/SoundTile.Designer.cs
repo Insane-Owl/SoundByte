@@ -28,70 +28,71 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            panel1 = new Panel();
-            label2 = new Label();
-            button1 = new Button();
+            lblClipName = new Label();
+            pnlPlayingIndicator = new Panel();
+            lblHotkey = new Label();
+            btnEdit = new Button();
             SuspendLayout();
             // 
-            // label1
+            // lblClipName
             // 
-            label1.Anchor = AnchorStyles.None;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label1.ForeColor = SystemColors.ControlText;
-            label1.Location = new Point(8, 29);
-            label1.Name = "label1";
-            label1.Size = new Size(135, 23);
-            label1.TabIndex = 1;
-            label1.Text = "Sound Name";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
+            lblClipName.Anchor = AnchorStyles.None;
+            lblClipName.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblClipName.ForeColor = SystemColors.ControlText;
+            lblClipName.Location = new Point(8, 22);
+            lblClipName.Name = "lblClipName";
+            lblClipName.Size = new Size(135, 23);
+            lblClipName.TabIndex = 1;
+            lblClipName.Text = "Sound Name";
+            lblClipName.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // panel1
+            // pnlPlayingIndicator
             // 
-            panel1.BackColor = Color.LimeGreen;
-            panel1.Dock = DockStyle.Left;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(5, 80);
-            panel1.TabIndex = 0;
-            panel1.Visible = false;
+            pnlPlayingIndicator.BackColor = Color.LimeGreen;
+            pnlPlayingIndicator.Dock = DockStyle.Left;
+            pnlPlayingIndicator.Location = new Point(0, 0);
+            pnlPlayingIndicator.Name = "pnlPlayingIndicator";
+            pnlPlayingIndicator.Size = new Size(5, 80);
+            pnlPlayingIndicator.TabIndex = 0;
+            pnlPlayingIndicator.Visible = false;
             // 
-            // label2
+            // lblHotkey
             // 
-            label2.Anchor = AnchorStyles.None;
-            label2.Font = new Font("Segoe UI", 8F);
-            label2.ForeColor = SystemColors.ControlText;
-            label2.Location = new Point(8, 50);
-            label2.Name = "label2";
-            label2.Size = new Size(135, 19);
-            label2.TabIndex = 2;
-            label2.Text = "None";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
-            label2.Visible = false;
+            lblHotkey.Anchor = AnchorStyles.None;
+            lblHotkey.Font = new Font("Segoe UI", 8F);
+            lblHotkey.ForeColor = SystemColors.ControlText;
+            lblHotkey.Location = new Point(8, 43);
+            lblHotkey.Name = "lblHotkey";
+            lblHotkey.Size = new Size(135, 19);
+            lblHotkey.TabIndex = 2;
+            lblHotkey.Text = "None";
+            lblHotkey.TextAlign = ContentAlignment.MiddleCenter;
+            lblHotkey.Visible = false;
             // 
-            // button1
+            // btnEdit
             // 
-            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button1.BackColor = Color.Transparent;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Font = new Font("Segoe UI", 10F);
-            button1.Location = new Point(126, -5);
-            button1.Name = "button1";
-            button1.Size = new Size(24, 24);
-            button1.TabIndex = 5;
-            button1.Text = "⋯";
-            button1.UseVisualStyleBackColor = false;
+            btnEdit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnEdit.BackColor = Color.Transparent;
+            btnEdit.FlatAppearance.BorderSize = 0;
+            btnEdit.FlatStyle = FlatStyle.Flat;
+            btnEdit.Font = new Font("Segoe UI", 10F);
+            btnEdit.Location = new Point(126, -5);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(24, 24);
+            btnEdit.TabIndex = 5;
+            btnEdit.Text = "⋯";
+            btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += BtnEdit_Click;
             // 
             // SoundTile
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLightLight;
-            Controls.Add(button1);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(panel1);
+            Controls.Add(btnEdit);
+            Controls.Add(lblHotkey);
+            Controls.Add(lblClipName);
+            Controls.Add(pnlPlayingIndicator);
             Name = "SoundTile";
             Size = new Size(150, 80);
             Paint += SoundTile_Paint;
@@ -99,9 +100,9 @@
         }
 
         #endregion
-        private Label label1;
-        private Panel panel1;
-        private Label label2;
-        private Button button1;
+        private Label lblClipName;
+        private Panel pnlPlayingIndicator;
+        private Label lblHotkey;
+        private Button btnEdit;
     }
 }

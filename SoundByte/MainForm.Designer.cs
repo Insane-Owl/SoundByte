@@ -39,7 +39,8 @@
             lblMasterVolume = new Label();
             trkMasterVolume = new TrackBar();
             pnlStatusBar = new Panel();
-            label1 = new Label();
+            btnCloseApp = new Button();
+            lblStatus = new Label();
             pnlEditor = new Panel();
             pnlEditorContents = new Panel();
             flpEditorContents = new FlowLayoutPanel();
@@ -63,18 +64,6 @@
             btnEditorClose = new Button();
             lblEditorLabel = new Label();
             flpSoundGrid = new FlowLayoutPanel();
-            soundTile1 = new SoundTile();
-            soundTile2 = new SoundTile();
-            soundTile3 = new SoundTile();
-            soundTile4 = new SoundTile();
-            soundTile5 = new SoundTile();
-            soundTile6 = new SoundTile();
-            soundTile7 = new SoundTile();
-            soundTile8 = new SoundTile();
-            soundTile9 = new SoundTile();
-            soundTile10 = new SoundTile();
-            soundTile11 = new SoundTile();
-            soundTile12 = new SoundTile();
             tlpMenuBar.SuspendLayout();
             flpProfileControls.SuspendLayout();
             tlpMasterVolumeControls.SuspendLayout();
@@ -89,7 +78,6 @@
             ((System.ComponentModel.ISupportInitialize)trkVolume).BeginInit();
             pnlHotkey.SuspendLayout();
             pnlEditorHeader.SuspendLayout();
-            flpSoundGrid.SuspendLayout();
             SuspendLayout();
             // 
             // tlpMenuBar
@@ -111,7 +99,7 @@
             tlpMenuBar.Name = "tlpMenuBar";
             tlpMenuBar.RowCount = 1;
             tlpMenuBar.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpMenuBar.Size = new Size(670, 36);
+            tlpMenuBar.Size = new Size(626, 36);
             tlpMenuBar.TabIndex = 0;
             // 
             // btnNewSound
@@ -124,6 +112,7 @@
             btnNewSound.TabIndex = 1;
             btnNewSound.Text = "New Sound";
             btnNewSound.UseVisualStyleBackColor = false;
+            btnNewSound.Click += BtnNewSound_Click;
             // 
             // flpProfileControls
             // 
@@ -148,6 +137,7 @@
             btnSaveProfile.TabIndex = 2;
             btnSaveProfile.Text = "Save Profile";
             btnSaveProfile.UseVisualStyleBackColor = false;
+            btnSaveProfile.Click += BtnSaveProfile_Click;
             // 
             // btnLoadProfile
             // 
@@ -165,7 +155,7 @@
             btnStopAll.Anchor = AnchorStyles.None;
             btnStopAll.FlatAppearance.BorderColor = Color.DarkRed;
             btnStopAll.FlatAppearance.BorderSize = 0;
-            btnStopAll.Location = new Point(569, 4);
+            btnStopAll.Location = new Point(525, 4);
             btnStopAll.Name = "btnStopAll";
             btnStopAll.Size = new Size(96, 28);
             btnStopAll.TabIndex = 5;
@@ -187,13 +177,13 @@
             tlpMasterVolumeControls.RowCount = 1;
             tlpMasterVolumeControls.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tlpMasterVolumeControls.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tlpMasterVolumeControls.Size = new Size(304, 28);
+            tlpMasterVolumeControls.Size = new Size(260, 28);
             tlpMasterVolumeControls.TabIndex = 3;
             // 
             // lblMasterVolumeLevel
             // 
             lblMasterVolumeLevel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            lblMasterVolumeLevel.Location = new Point(266, 0);
+            lblMasterVolumeLevel.Location = new Point(222, 0);
             lblMasterVolumeLevel.Name = "lblMasterVolumeLevel";
             lblMasterVolumeLevel.Size = new Size(35, 28);
             lblMasterVolumeLevel.TabIndex = 4;
@@ -219,33 +209,47 @@
             trkMasterVolume.Location = new Point(58, 3);
             trkMasterVolume.Maximum = 100;
             trkMasterVolume.Name = "trkMasterVolume";
-            trkMasterVolume.Size = new Size(202, 22);
+            trkMasterVolume.Size = new Size(158, 22);
             trkMasterVolume.SmallChange = 10;
             trkMasterVolume.TabIndex = 4;
             trkMasterVolume.TickFrequency = 10;
             trkMasterVolume.TickStyle = TickStyle.None;
             trkMasterVolume.Value = 100;
+            trkMasterVolume.ValueChanged += TrkMasterVolume_ValueChanged;
             // 
             // pnlStatusBar
             // 
             pnlStatusBar.BorderStyle = BorderStyle.FixedSingle;
-            pnlStatusBar.Controls.Add(label1);
+            pnlStatusBar.Controls.Add(btnCloseApp);
+            pnlStatusBar.Controls.Add(lblStatus);
             pnlStatusBar.Dock = DockStyle.Bottom;
             pnlStatusBar.Location = new Point(0, 403);
             pnlStatusBar.Name = "pnlStatusBar";
-            pnlStatusBar.Size = new Size(470, 28);
+            pnlStatusBar.Size = new Size(426, 28);
             pnlStatusBar.TabIndex = 1;
             // 
-            // label1
+            // btnCloseApp
             // 
-            label1.BackColor = Color.White;
-            label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(0, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(468, 26);
-            label1.TabIndex = 0;
-            label1.Text = "Status: Profile \"test_profile1.sbp\" saved";
-            label1.TextAlign = ContentAlignment.MiddleLeft;
+            btnCloseApp.Dock = DockStyle.Right;
+            btnCloseApp.Location = new Point(376, 0);
+            btnCloseApp.Name = "btnCloseApp";
+            btnCloseApp.Size = new Size(48, 26);
+            btnCloseApp.TabIndex = 1;
+            btnCloseApp.Text = "Exit";
+            btnCloseApp.UseVisualStyleBackColor = true;
+            btnCloseApp.Click += btnCloseApp_Click;
+            // 
+            // lblStatus
+            // 
+            lblStatus.BackColor = Color.White;
+            lblStatus.Dock = DockStyle.Fill;
+            lblStatus.ForeColor = SystemColors.ControlText;
+            lblStatus.Location = new Point(0, 0);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(424, 26);
+            lblStatus.TabIndex = 0;
+            lblStatus.Text = "Status: Profile \"test_profile1.sbp\" saved";
+            lblStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // pnlEditor
             // 
@@ -255,10 +259,11 @@
             pnlEditor.Controls.Add(lblEditorSeperator);
             pnlEditor.Controls.Add(pnlEditorHeader);
             pnlEditor.Dock = DockStyle.Right;
-            pnlEditor.Location = new Point(470, 36);
+            pnlEditor.Location = new Point(426, 36);
             pnlEditor.Name = "pnlEditor";
             pnlEditor.Size = new Size(200, 395);
             pnlEditor.TabIndex = 2;
+            pnlEditor.Visible = false;
             // 
             // pnlEditorContents
             // 
@@ -381,6 +386,7 @@
             trkVolume.TickFrequency = 10;
             trkVolume.TickStyle = TickStyle.None;
             trkVolume.Value = 100;
+            trkVolume.ValueChanged += TrkVolume_ValueChanged;
             // 
             // lblVolume
             // 
@@ -427,6 +433,7 @@
             btnDelete.TabIndex = 0;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
             // 
             // lblEditorSeperator
             // 
@@ -474,126 +481,18 @@
             // 
             flpSoundGrid.AutoScroll = true;
             flpSoundGrid.BorderStyle = BorderStyle.FixedSingle;
-            flpSoundGrid.Controls.Add(soundTile1);
-            flpSoundGrid.Controls.Add(soundTile2);
-            flpSoundGrid.Controls.Add(soundTile3);
-            flpSoundGrid.Controls.Add(soundTile4);
-            flpSoundGrid.Controls.Add(soundTile5);
-            flpSoundGrid.Controls.Add(soundTile6);
-            flpSoundGrid.Controls.Add(soundTile7);
-            flpSoundGrid.Controls.Add(soundTile8);
-            flpSoundGrid.Controls.Add(soundTile9);
-            flpSoundGrid.Controls.Add(soundTile10);
-            flpSoundGrid.Controls.Add(soundTile11);
-            flpSoundGrid.Controls.Add(soundTile12);
             flpSoundGrid.Dock = DockStyle.Fill;
             flpSoundGrid.Location = new Point(0, 36);
             flpSoundGrid.Name = "flpSoundGrid";
-            flpSoundGrid.Size = new Size(470, 367);
+            flpSoundGrid.Size = new Size(426, 367);
             flpSoundGrid.TabIndex = 3;
-            // 
-            // soundTile1
-            // 
-            soundTile1.BackColor = SystemColors.ControlLightLight;
-            soundTile1.Location = new Point(3, 3);
-            soundTile1.Name = "soundTile1";
-            soundTile1.Size = new Size(150, 80);
-            soundTile1.TabIndex = 0;
-            // 
-            // soundTile2
-            // 
-            soundTile2.BackColor = SystemColors.ControlLightLight;
-            soundTile2.Location = new Point(159, 3);
-            soundTile2.Name = "soundTile2";
-            soundTile2.Size = new Size(150, 80);
-            soundTile2.TabIndex = 1;
-            // 
-            // soundTile3
-            // 
-            soundTile3.BackColor = SystemColors.ControlLightLight;
-            soundTile3.Location = new Point(315, 3);
-            soundTile3.Name = "soundTile3";
-            soundTile3.Size = new Size(150, 80);
-            soundTile3.TabIndex = 2;
-            // 
-            // soundTile4
-            // 
-            soundTile4.BackColor = SystemColors.ControlLightLight;
-            soundTile4.Location = new Point(3, 89);
-            soundTile4.Name = "soundTile4";
-            soundTile4.Size = new Size(150, 80);
-            soundTile4.TabIndex = 3;
-            // 
-            // soundTile5
-            // 
-            soundTile5.BackColor = SystemColors.ControlLightLight;
-            soundTile5.Location = new Point(159, 89);
-            soundTile5.Name = "soundTile5";
-            soundTile5.Size = new Size(150, 80);
-            soundTile5.TabIndex = 4;
-            // 
-            // soundTile6
-            // 
-            soundTile6.BackColor = SystemColors.ControlLightLight;
-            soundTile6.Location = new Point(315, 89);
-            soundTile6.Name = "soundTile6";
-            soundTile6.Size = new Size(150, 80);
-            soundTile6.TabIndex = 5;
-            // 
-            // soundTile7
-            // 
-            soundTile7.BackColor = SystemColors.ControlLightLight;
-            soundTile7.Location = new Point(3, 175);
-            soundTile7.Name = "soundTile7";
-            soundTile7.Size = new Size(150, 80);
-            soundTile7.TabIndex = 6;
-            // 
-            // soundTile8
-            // 
-            soundTile8.BackColor = SystemColors.ControlLightLight;
-            soundTile8.Location = new Point(159, 175);
-            soundTile8.Name = "soundTile8";
-            soundTile8.Size = new Size(150, 80);
-            soundTile8.TabIndex = 7;
-            // 
-            // soundTile9
-            // 
-            soundTile9.BackColor = SystemColors.ControlLightLight;
-            soundTile9.Location = new Point(315, 175);
-            soundTile9.Name = "soundTile9";
-            soundTile9.Size = new Size(150, 80);
-            soundTile9.TabIndex = 8;
-            // 
-            // soundTile10
-            // 
-            soundTile10.BackColor = SystemColors.ControlLightLight;
-            soundTile10.Location = new Point(3, 261);
-            soundTile10.Name = "soundTile10";
-            soundTile10.Size = new Size(150, 80);
-            soundTile10.TabIndex = 9;
-            // 
-            // soundTile11
-            // 
-            soundTile11.BackColor = SystemColors.ControlLightLight;
-            soundTile11.Location = new Point(159, 261);
-            soundTile11.Name = "soundTile11";
-            soundTile11.Size = new Size(150, 80);
-            soundTile11.TabIndex = 10;
-            // 
-            // soundTile12
-            // 
-            soundTile12.BackColor = SystemColors.ControlLightLight;
-            soundTile12.Location = new Point(315, 261);
-            soundTile12.Name = "soundTile12";
-            soundTile12.Size = new Size(150, 80);
-            soundTile12.TabIndex = 11;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(670, 431);
+            ClientSize = new Size(626, 431);
             Controls.Add(flpSoundGrid);
             Controls.Add(pnlStatusBar);
             Controls.Add(pnlEditor);
@@ -621,7 +520,6 @@
             pnlHotkey.ResumeLayout(false);
             pnlHotkey.PerformLayout();
             pnlEditorHeader.ResumeLayout(false);
-            flpSoundGrid.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -651,7 +549,7 @@
         private Panel pnlFilePath;
         private Label lblFilePath;
         private Button btnBrowse;
-        private Label label1;
+        private Label lblStatus;
         private Button btnEditorClose;
         private Panel pnlVolume;
         private Label lblVolume;
@@ -661,17 +559,6 @@
         private Label lblHotkey;
         private TextBox txtHotkey;
         private Button btnDelete;
-        private SoundTile soundTile1;
-        private SoundTile soundTile2;
-        private SoundTile soundTile3;
-        private SoundTile soundTile4;
-        private SoundTile soundTile5;
-        private SoundTile soundTile6;
-        private SoundTile soundTile7;
-        private SoundTile soundTile8;
-        private SoundTile soundTile9;
-        private SoundTile soundTile10;
-        private SoundTile soundTile11;
-        private SoundTile soundTile12;
+        private Button btnCloseApp;
     }
 }
