@@ -9,6 +9,7 @@ namespace SoundByte
             InitializeComponent();
 
             TestInit();
+            RunBackendTests();
         }
 
         private void BtnEditorClose_Click(object sender, EventArgs e)
@@ -130,6 +131,28 @@ namespace SoundByte
             }
 
             return true;
+        }
+
+        private void RunBackendTests()
+        {
+            // Test constructors
+            HotkeySound testSound = new HotkeySound("Laser", "laser.wav", "F", 70);
+            SoundManager manager = new SoundManager();
+
+            // Test adding a sound to the manager
+            manager.AddSound(testSound);
+
+            // Test methods
+            testSound.AssignHotkey("G", 71);
+
+            // Validate expected results
+            if (manager.SoundList.Count != 1 || testSound.HotkeyText != "G" || testSound.VolumeLevel != 100)
+            {
+                SendStatus("Backend classes failed testing", true);
+                return;
+            }
+
+            SendStatus("Backend classes passed testing");
         }
     }
 }
