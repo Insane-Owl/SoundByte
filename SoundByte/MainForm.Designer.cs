@@ -420,7 +420,7 @@
             btnDelete.TabIndex = 0;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
-            btnDelete.Click += btnDelete_Click;
+            btnDelete.Click += BtnDelete_Click;
             // 
             // lblEditorSeperator
             // 

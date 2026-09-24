@@ -50,7 +50,7 @@ namespace SoundByte
                 CreateTile("Test Sound " + (i + 1), "example_sound.mp3", 100, "");
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             DeleteTile(_currentlyEditingTile);
             _currentlyEditingTile = null;
