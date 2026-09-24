@@ -81,11 +81,6 @@ namespace SoundByte
             lblVolumeLevel.Text = trkVolume.Value + "%";
         }
 
-        private void btnCloseApp_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void BtnSaveProfile_Click(object sender, EventArgs e)
         {
             SaveProfile();

@@ -39,7 +39,6 @@
             lblMasterVolume = new Label();
             trkMasterVolume = new TrackBar();
             pnlStatusBar = new Panel();
-            btnCloseApp = new Button();
             lblStatus = new Label();
             pnlEditor = new Panel();
             pnlEditorContents = new Panel();
@@ -220,24 +219,12 @@
             // pnlStatusBar
             // 
             pnlStatusBar.BorderStyle = BorderStyle.FixedSingle;
-            pnlStatusBar.Controls.Add(btnCloseApp);
             pnlStatusBar.Controls.Add(lblStatus);
             pnlStatusBar.Dock = DockStyle.Bottom;
             pnlStatusBar.Location = new Point(0, 403);
             pnlStatusBar.Name = "pnlStatusBar";
             pnlStatusBar.Size = new Size(426, 28);
             pnlStatusBar.TabIndex = 1;
-            // 
-            // btnCloseApp
-            // 
-            btnCloseApp.Dock = DockStyle.Right;
-            btnCloseApp.Location = new Point(376, 0);
-            btnCloseApp.Name = "btnCloseApp";
-            btnCloseApp.Size = new Size(48, 26);
-            btnCloseApp.TabIndex = 1;
-            btnCloseApp.Text = "Exit";
-            btnCloseApp.UseVisualStyleBackColor = true;
-            btnCloseApp.Click += btnCloseApp_Click;
             // 
             // lblStatus
             // 
@@ -559,6 +546,5 @@
         private Label lblHotkey;
         private TextBox txtHotkey;
         private Button btnDelete;
-        private Button btnCloseApp;
     }
 }
