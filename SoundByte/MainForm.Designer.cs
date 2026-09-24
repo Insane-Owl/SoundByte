@@ -57,6 +57,8 @@
             pnlHotkey = new Panel();
             lblHotkey = new Label();
             txtHotkey = new TextBox();
+            flpFooter = new FlowLayoutPanel();
+            btnSave = new Button();
             btnDelete = new Button();
             lblEditorSeperator = new Label();
             pnlEditorHeader = new Panel();
@@ -76,6 +78,7 @@
             pnlVolume.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trkVolume).BeginInit();
             pnlHotkey.SuspendLayout();
+            flpFooter.SuspendLayout();
             pnlEditorHeader.SuspendLayout();
             SuspendLayout();
             // 
@@ -255,7 +258,7 @@
             // pnlEditorContents
             // 
             pnlEditorContents.Controls.Add(flpEditorContents);
-            pnlEditorContents.Controls.Add(btnDelete);
+            pnlEditorContents.Controls.Add(flpFooter);
             pnlEditorContents.Dock = DockStyle.Fill;
             pnlEditorContents.Location = new Point(0, 30);
             pnlEditorContents.Name = "pnlEditorContents";
@@ -273,7 +276,7 @@
             flpEditorContents.FlowDirection = FlowDirection.TopDown;
             flpEditorContents.Location = new Point(5, 5);
             flpEditorContents.Name = "flpEditorContents";
-            flpEditorContents.Size = new Size(188, 325);
+            flpEditorContents.Size = new Size(188, 319);
             flpEditorContents.TabIndex = 0;
             // 
             // pnlClipName
@@ -411,12 +414,33 @@
             txtHotkey.Size = new Size(182, 23);
             txtHotkey.TabIndex = 2;
             // 
+            // flpFooter
+            // 
+            flpFooter.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flpFooter.Controls.Add(btnSave);
+            flpFooter.Controls.Add(btnDelete);
+            flpFooter.Dock = DockStyle.Bottom;
+            flpFooter.Location = new Point(5, 324);
+            flpFooter.Name = "flpFooter";
+            flpFooter.Size = new Size(188, 34);
+            flpFooter.TabIndex = 1;
+            // 
+            // btnSave
+            // 
+            btnSave.Anchor = AnchorStyles.None;
+            btnSave.Location = new Point(3, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(88, 28);
+            btnSave.TabIndex = 1;
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = true;
+            // 
             // btnDelete
             // 
-            btnDelete.Dock = DockStyle.Bottom;
-            btnDelete.Location = new Point(5, 330);
+            btnDelete.Anchor = AnchorStyles.None;
+            btnDelete.Location = new Point(97, 3);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(188, 28);
+            btnDelete.Size = new Size(88, 28);
             btnDelete.TabIndex = 0;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
@@ -506,6 +530,7 @@
             ((System.ComponentModel.ISupportInitialize)trkVolume).EndInit();
             pnlHotkey.ResumeLayout(false);
             pnlHotkey.PerformLayout();
+            flpFooter.ResumeLayout(false);
             pnlEditorHeader.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -546,5 +571,7 @@
         private Label lblHotkey;
         private TextBox txtHotkey;
         private Button btnDelete;
+        private FlowLayoutPanel flpFooter;
+        private Button btnSave;
     }
 }
