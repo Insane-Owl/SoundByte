@@ -3,13 +3,13 @@ namespace SoundByte
     public partial class MainForm : Form
     {
         private SoundTile _currentlyEditingTile = null;
+        private SoundManager _soundManager;
 
         public MainForm()
         {
             InitializeComponent();
-
+            _soundManager = new SoundManager();
             TestInit();
-            RunBackendTests();
         }
 
         private void BtnEditorClose_Click(object sender, EventArgs e)
@@ -24,11 +24,16 @@ namespace SoundByte
 
         private void CreateTile(string name, string filePath, int volume, string hotkey)
         {
+            HotkeySound newSound = new HotkeySound(name, filePath, hotkey, 0);
+            newSound.VolumeLevel = volume;
+            _soundManager.AddSound(newSound);
+
             SoundTile newTile = new SoundTile();
             newTile.ClipName = name;
             newTile.FilePath = filePath;
             newTile.Volume = volume;
             newTile.Hotkey = hotkey;
+            newTile.Tag = newSound;
             newTile.EditRequested += SoundTile_EditRequested;
             flpSoundGrid.Controls.Add(newTile);
         }
@@ -60,6 +65,10 @@ namespace SoundByte
 
         private void DeleteTile(SoundTile tile)
         {
+            if (tile.Tag is AudioSound sound)
+            {
+                _soundManager.RemoveSound(sound);
+            }
             flpSoundGrid.Controls.Remove(tile);
             SendStatus($"Deleted tile \"{tile.ClipName}\" sucessfully");
         }
@@ -74,6 +83,7 @@ namespace SoundByte
 
         private void TrkMasterVolume_ValueChanged(object sender, EventArgs e)
         {
+            _soundManager.MasterVolume = trkMasterVolume.Value;
             lblMasterVolumeLevel.Text = trkMasterVolume.Value + "%";
         }
 
