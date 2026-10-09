@@ -227,5 +227,11 @@ namespace SoundByte
 
             SendStatus($"Updated \"{txtClipName.Text}\" successfully");
         }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            SaveEditorChanges();
+            CloseEditor();
+        }
     }
 }
