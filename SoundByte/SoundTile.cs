@@ -63,7 +63,6 @@ namespace SoundByte
             }
         }
 
-
         public event EventHandler EditRequested;
         public event EventHandler PlayRequested;
 

@@ -4,7 +4,8 @@ namespace SoundByte
 {
     public partial class MainForm : Form
     {
-        private SoundTile _currentlyEditingTile = null;
+        private SoundTile? _currentlyEditingTile = null;
+        private bool _isCreatingNew = false;
         private SoundManager _soundManager;
         private ProfileManager _profileManager;
 
@@ -79,6 +80,8 @@ namespace SoundByte
 
         private void DeleteTile(SoundTile tile)
         {
+            if (_currentlyEditingTile == null) return;
+
             if (tile.Tag is AudioSound sound)
             {
                 _soundManager.RemoveSound(sound);
@@ -140,7 +143,11 @@ namespace SoundByte
 
         private void BtnNewSound_Click(object sender, EventArgs e)
         {
-            CreateTile("Test", "example_sound.mp3", 100, "");
+            _isCreatingNew = true;
+            _currentlyEditingTile = null;
+            ClearForm();
+            pnlEditor.Visible = true;
+            txtClipName.Focus();
         }
 
         private bool ValidateInput()
@@ -208,30 +215,38 @@ namespace SoundByte
 
         private void SaveEditorChanges()
         {
-            if (!ValidateInput() || _currentlyEditingTile == null) return;
+            if (!ValidateInput()) return;
 
-            // update UI tile
-            _currentlyEditingTile.ClipName = txtClipName.Text;
-            _currentlyEditingTile.FilePath = txtFilePath.Text;
-            _currentlyEditingTile.Volume = trkVolume.Value;
-            _currentlyEditingTile.Hotkey = txtHotkey.Text;
-
-            // update backend
-            if (_currentlyEditingTile.Tag is HotkeySound sound)
+            if (_isCreatingNew)
             {
-                sound.ClipName = txtClipName.Text;
-                sound.FilePath = txtFilePath.Text;
-                sound.VolumeLevel = trkVolume.Value;
-                sound.AssignHotkey(txtHotkey.Text, 0);
+                CreateTile(txtClipName.Text, txtFilePath.Text, trkVolume.Value, txtHotkey.Text);
+                _isCreatingNew = false;
+                SendStatus($"Created \"{txtClipName.Text}\" successfully");
             }
+            else if (_currentlyEditingTile != null)
+            {
+                // update UI tile
+                _currentlyEditingTile.ClipName = txtClipName.Text;
+                _currentlyEditingTile.FilePath = txtFilePath.Text;
+                _currentlyEditingTile.Volume = trkVolume.Value;
+                _currentlyEditingTile.Hotkey = txtHotkey.Text;
 
-            SendStatus($"Updated \"{txtClipName.Text}\" successfully");
+                // update backend
+                if (_currentlyEditingTile.Tag is HotkeySound sound)
+                {
+                    sound.ClipName = txtClipName.Text;
+                    sound.FilePath = txtFilePath.Text;
+                    sound.VolumeLevel = trkVolume.Value;
+                    sound.AssignHotkey(txtHotkey.Text, 0);
+                }
+                SendStatus($"Updated \"{txtClipName.Text}\" successfully");
+            }
+            CloseEditor();
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             SaveEditorChanges();
-            CloseEditor();
         }
     }
 }
