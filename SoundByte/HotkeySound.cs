@@ -9,6 +9,10 @@ namespace SoundByte
         public string HotkeyText { get; set; }
         public int RawKeyCode { get; set; }
 
+        public HotkeySound()
+        {
+        }
+
         public HotkeySound(string name, string path, string keyText, int keyCode) : base(name, path)
         {
             HotkeyText = keyText;

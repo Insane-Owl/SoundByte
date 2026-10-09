@@ -13,6 +13,12 @@ namespace SoundByte
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
 
+        public AudioSound()
+        {
+            VolumeLevel = 100;
+            IsActive = false;
+        }
+
         public AudioSound(string name, string path)
         {
             ClipName = name;
