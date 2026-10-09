@@ -226,7 +226,7 @@
             pnlStatusBar.Dock = DockStyle.Bottom;
             pnlStatusBar.Location = new Point(0, 403);
             pnlStatusBar.Name = "pnlStatusBar";
-            pnlStatusBar.Size = new Size(426, 28);
+            pnlStatusBar.Size = new Size(470, 28);
             pnlStatusBar.TabIndex = 1;
             // 
             // lblStatus
@@ -236,7 +236,7 @@
             lblStatus.ForeColor = SystemColors.ControlText;
             lblStatus.Location = new Point(0, 0);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(424, 26);
+            lblStatus.Size = new Size(468, 26);
             lblStatus.TabIndex = 0;
             lblStatus.Text = "Status: Profile \"test_profile1.sbp\" saved";
             lblStatus.TextAlign = ContentAlignment.MiddleLeft;
@@ -249,9 +249,9 @@
             pnlEditor.Controls.Add(lblEditorSeperator);
             pnlEditor.Controls.Add(pnlEditorHeader);
             pnlEditor.Dock = DockStyle.Right;
-            pnlEditor.Location = new Point(426, 36);
+            pnlEditor.Location = new Point(470, 36);
             pnlEditor.Name = "pnlEditor";
-            pnlEditor.Size = new Size(200, 395);
+            pnlEditor.Size = new Size(156, 395);
             pnlEditor.TabIndex = 2;
             pnlEditor.Visible = false;
             // 
@@ -263,7 +263,7 @@
             pnlEditorContents.Location = new Point(0, 30);
             pnlEditorContents.Name = "pnlEditorContents";
             pnlEditorContents.Padding = new Padding(5);
-            pnlEditorContents.Size = new Size(198, 363);
+            pnlEditorContents.Size = new Size(154, 363);
             pnlEditorContents.TabIndex = 1;
             // 
             // flpEditorContents
@@ -276,7 +276,7 @@
             flpEditorContents.FlowDirection = FlowDirection.TopDown;
             flpEditorContents.Location = new Point(5, 5);
             flpEditorContents.Name = "flpEditorContents";
-            flpEditorContents.Size = new Size(188, 319);
+            flpEditorContents.Size = new Size(144, 319);
             flpEditorContents.TabIndex = 0;
             // 
             // pnlClipName
@@ -286,7 +286,7 @@
             pnlClipName.Location = new Point(3, 3);
             pnlClipName.Name = "pnlClipName";
             pnlClipName.Padding = new Padding(0, 0, 0, 50);
-            pnlClipName.Size = new Size(182, 50);
+            pnlClipName.Size = new Size(138, 50);
             pnlClipName.TabIndex = 5;
             // 
             // lblClipName
@@ -303,7 +303,7 @@
             txtClipName.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             txtClipName.Location = new Point(0, 24);
             txtClipName.Name = "txtClipName";
-            txtClipName.Size = new Size(182, 23);
+            txtClipName.Size = new Size(138, 23);
             txtClipName.TabIndex = 2;
             // 
             // pnlFilePath
@@ -314,7 +314,7 @@
             pnlFilePath.Location = new Point(3, 59);
             pnlFilePath.Name = "pnlFilePath";
             pnlFilePath.Padding = new Padding(0, 0, 0, 20);
-            pnlFilePath.Size = new Size(182, 50);
+            pnlFilePath.Size = new Size(138, 83);
             pnlFilePath.TabIndex = 6;
             // 
             // lblFilePath
@@ -328,9 +328,9 @@
             // 
             // btnBrowse
             // 
-            btnBrowse.Location = new Point(117, 24);
+            btnBrowse.Location = new Point(0, 53);
             btnBrowse.Name = "btnBrowse";
-            btnBrowse.Size = new Size(65, 23);
+            btnBrowse.Size = new Size(138, 23);
             btnBrowse.TabIndex = 3;
             btnBrowse.Text = "Browse...";
             btnBrowse.UseVisualStyleBackColor = false;
@@ -340,7 +340,7 @@
             txtFilePath.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             txtFilePath.Location = new Point(0, 24);
             txtFilePath.Name = "txtFilePath";
-            txtFilePath.Size = new Size(111, 23);
+            txtFilePath.Size = new Size(138, 23);
             txtFilePath.TabIndex = 2;
             // 
             // pnlVolume
@@ -348,15 +348,15 @@
             pnlVolume.Controls.Add(lblVolumeLevel);
             pnlVolume.Controls.Add(trkVolume);
             pnlVolume.Controls.Add(lblVolume);
-            pnlVolume.Location = new Point(3, 115);
+            pnlVolume.Location = new Point(3, 148);
             pnlVolume.Name = "pnlVolume";
             pnlVolume.Padding = new Padding(0, 0, 0, 20);
-            pnlVolume.Size = new Size(182, 50);
+            pnlVolume.Size = new Size(138, 50);
             pnlVolume.TabIndex = 7;
             // 
             // lblVolumeLevel
             // 
-            lblVolumeLevel.Location = new Point(144, 2);
+            lblVolumeLevel.Location = new Point(103, 2);
             lblVolumeLevel.Name = "lblVolumeLevel";
             lblVolumeLevel.Size = new Size(38, 23);
             lblVolumeLevel.TabIndex = 6;
@@ -370,7 +370,7 @@
             trkVolume.Location = new Point(-3, 23);
             trkVolume.Maximum = 100;
             trkVolume.Name = "trkVolume";
-            trkVolume.Size = new Size(185, 27);
+            trkVolume.Size = new Size(149, 27);
             trkVolume.SmallChange = 10;
             trkVolume.TabIndex = 5;
             trkVolume.TickFrequency = 10;
@@ -391,10 +391,10 @@
             // 
             pnlHotkey.Controls.Add(lblHotkey);
             pnlHotkey.Controls.Add(txtHotkey);
-            pnlHotkey.Location = new Point(3, 171);
+            pnlHotkey.Location = new Point(3, 204);
             pnlHotkey.Name = "pnlHotkey";
             pnlHotkey.Padding = new Padding(0, 0, 0, 20);
-            pnlHotkey.Size = new Size(182, 50);
+            pnlHotkey.Size = new Size(138, 50);
             pnlHotkey.TabIndex = 8;
             // 
             // lblHotkey
@@ -411,7 +411,7 @@
             txtHotkey.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             txtHotkey.Location = new Point(0, 24);
             txtHotkey.Name = "txtHotkey";
-            txtHotkey.Size = new Size(182, 23);
+            txtHotkey.Size = new Size(138, 23);
             txtHotkey.TabIndex = 2;
             // 
             // flpFooter
@@ -422,7 +422,7 @@
             flpFooter.Dock = DockStyle.Bottom;
             flpFooter.Location = new Point(5, 324);
             flpFooter.Name = "flpFooter";
-            flpFooter.Size = new Size(188, 34);
+            flpFooter.Size = new Size(144, 34);
             flpFooter.TabIndex = 1;
             // 
             // btnSave
@@ -430,7 +430,7 @@
             btnSave.Anchor = AnchorStyles.None;
             btnSave.Location = new Point(3, 3);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(88, 28);
+            btnSave.Size = new Size(66, 28);
             btnSave.TabIndex = 1;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
@@ -438,9 +438,9 @@
             // btnDelete
             // 
             btnDelete.Anchor = AnchorStyles.None;
-            btnDelete.Location = new Point(97, 3);
+            btnDelete.Location = new Point(75, 3);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(88, 28);
+            btnDelete.Size = new Size(66, 28);
             btnDelete.TabIndex = 0;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
@@ -452,7 +452,7 @@
             lblEditorSeperator.Dock = DockStyle.Top;
             lblEditorSeperator.Location = new Point(0, 28);
             lblEditorSeperator.Name = "lblEditorSeperator";
-            lblEditorSeperator.Size = new Size(198, 2);
+            lblEditorSeperator.Size = new Size(154, 2);
             lblEditorSeperator.TabIndex = 2;
             // 
             // pnlEditorHeader
@@ -462,7 +462,7 @@
             pnlEditorHeader.Dock = DockStyle.Top;
             pnlEditorHeader.Location = new Point(0, 0);
             pnlEditorHeader.Name = "pnlEditorHeader";
-            pnlEditorHeader.Size = new Size(198, 28);
+            pnlEditorHeader.Size = new Size(154, 28);
             pnlEditorHeader.TabIndex = 0;
             // 
             // btnEditorClose
@@ -470,7 +470,7 @@
             btnEditorClose.Dock = DockStyle.Right;
             btnEditorClose.FlatAppearance.BorderSize = 0;
             btnEditorClose.FlatStyle = FlatStyle.Flat;
-            btnEditorClose.Location = new Point(170, 0);
+            btnEditorClose.Location = new Point(126, 0);
             btnEditorClose.Name = "btnEditorClose";
             btnEditorClose.Size = new Size(28, 28);
             btnEditorClose.TabIndex = 1;
@@ -495,7 +495,7 @@
             flpSoundGrid.Dock = DockStyle.Fill;
             flpSoundGrid.Location = new Point(0, 36);
             flpSoundGrid.Name = "flpSoundGrid";
-            flpSoundGrid.Size = new Size(426, 367);
+            flpSoundGrid.Size = new Size(470, 367);
             flpSoundGrid.TabIndex = 3;
             // 
             // MainForm
@@ -509,7 +509,7 @@
             Controls.Add(pnlEditor);
             Controls.Add(tlpMenuBar);
             ForeColor = SystemColors.ControlText;
-            MinimumSize = new Size(530, 380);
+            MinimumSize = new Size(486, 380);
             Name = "MainForm";
             Text = "SoundByte";
             tlpMenuBar.ResumeLayout(false);
