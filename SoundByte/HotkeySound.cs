@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SoundByte
 {
-    internal class HotkeySound : AudioSound
+    public class HotkeySound : AudioSound
     {
         public string HotkeyText { get; set; }
         public int RawKeyCode { get; set; }

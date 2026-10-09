@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SoundByte
 {
-    internal class SoundManager
+    public class SoundManager
     {
         public string ProfileName { get; set; }
         public int MasterVolume { get; set; }

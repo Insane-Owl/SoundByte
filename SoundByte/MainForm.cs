@@ -70,6 +70,7 @@ namespace SoundByte
                 _soundManager.RemoveSound(sound);
             }
             flpSoundGrid.Controls.Remove(tile);
+            CloseEditor();
             SendStatus($"Deleted tile \"{tile.ClipName}\" sucessfully");
         }
 

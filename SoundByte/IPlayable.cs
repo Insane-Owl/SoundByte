@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SoundByte
 {
-    internal interface IPlayable
+    public interface IPlayable
     {
         void PlaySound();
         void StopSound();

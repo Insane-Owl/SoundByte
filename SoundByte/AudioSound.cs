@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SoundByte
 {
-    internal class AudioSound
+    public class AudioSound : IPlayable
     {
         public string ClipName { get; set; }
         public string FilePath { get; set; }

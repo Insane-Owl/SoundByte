@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SoundByte
 {
-    internal class ProfileManager
+    public class ProfileManager
     {
         private string saveDirectory;
 
