@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SoundByte
 {
     public interface IPlayable
     {
-        void PlaySound();
+        Task PlaySoundAsync();
         void StopSound();
     }
 }

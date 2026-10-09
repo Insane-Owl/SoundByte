@@ -1,15 +1,19 @@
+using System.Text.Json;
+
 namespace SoundByte
 {
     public partial class MainForm : Form
     {
         private SoundTile _currentlyEditingTile = null;
         private SoundManager _soundManager;
+        private ProfileManager _profileManager;
 
         public MainForm()
         {
             InitializeComponent();
             _soundManager = new SoundManager();
-            TestInit();
+            _profileManager = new ProfileManager();
+            //TestInit();
         }
 
         private void BtnEditorClose_Click(object sender, EventArgs e)
@@ -35,6 +39,15 @@ namespace SoundByte
             newTile.Hotkey = hotkey;
             newTile.Tag = newSound;
             newTile.EditRequested += SoundTile_EditRequested;
+
+            newTile.PlayRequested += async (s, e) =>
+            {
+                if (newTile.Tag is AudioSound sound)
+                {
+                    await sound.PlaySoundAsync();
+                }
+            };
+
             flpSoundGrid.Controls.Add(newTile);
         }
 
@@ -61,6 +74,7 @@ namespace SoundByte
             DeleteTile(_currentlyEditingTile);
             _currentlyEditingTile = null;
             ClearForm();
+            CloseEditor();
         }
 
         private void DeleteTile(SoundTile tile)
@@ -70,7 +84,6 @@ namespace SoundByte
                 _soundManager.RemoveSound(sound);
             }
             flpSoundGrid.Controls.Remove(tile);
-            CloseEditor();
             SendStatus($"Deleted tile \"{tile.ClipName}\" sucessfully");
         }
 
@@ -100,10 +113,15 @@ namespace SoundByte
 
         private void SaveProfile()
         {
-            if (!ValidateInput())
-                return;
-
-            SendStatus("Profile \"profile.sbp\" saved successfully");
+            using (SaveFileDialog sfd = new SaveFileDialog() { Filter = "Soundbyte Profile|*.sbp" })
+            {
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    _profileManager.SaveProfile(_soundManager.SoundList, sfd.FileName);
+                    SendStatus($"Profile saved to {sfd.FileName}");
+                }
+            }
+            ;
         }
 
         private void SendStatus(string message, bool isError = false)
@@ -164,6 +182,50 @@ namespace SoundByte
             }
 
             SendStatus("Backend classes passed testing");
+        }
+
+        private void BtnLoadProfile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog() { Filter = "SoundByte Profile|*.sbp" })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    flpSoundGrid.Controls.Clear();
+                    _soundManager.SoundList.Clear();
+
+                    var loadedSounds = _profileManager.LoadProfile(ofd.FileName);
+                    foreach (var sound in loadedSounds)
+                    {
+                        if (sound is HotkeySound hs)
+                        {
+                            CreateTile(hs.ClipName, hs.FilePath, hs.VolumeLevel, hs.HotkeyText);
+                        }
+                    }
+                    SendStatus($"Profile loaded from {ofd.FileName}");
+                }
+            }
+        }
+
+        private void SaveEditorChanges()
+        {
+            if (!ValidateInput() || _currentlyEditingTile == null) return;
+
+            // update UI tile
+            _currentlyEditingTile.ClipName = txtClipName.Text;
+            _currentlyEditingTile.FilePath = txtFilePath.Text;
+            _currentlyEditingTile.Volume = trkVolume.Value;
+            _currentlyEditingTile.Hotkey = txtHotkey.Text;
+
+            // update backend
+            if (_currentlyEditingTile.Tag is HotkeySound sound)
+            {
+                sound.ClipName = txtClipName.Text;
+                sound.FilePath = txtFilePath.Text;
+                sound.VolumeLevel = trkVolume.Value;
+                sound.AssignHotkey(txtHotkey.Text, 0);
+            }
+
+            SendStatus($"Updated \"{txtClipName.Text}\" successfully");
         }
     }
 }

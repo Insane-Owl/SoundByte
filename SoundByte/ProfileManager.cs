@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Text.Json;
 
 namespace SoundByte
 {
@@ -13,15 +15,26 @@ namespace SoundByte
             saveDirectory = "Profiles\\";
         }
 
-        public void SaveProfile(List<AudioSound> sounds, string name)
+        public void SaveProfile(List<AudioSound> sounds, string filePath)
         {
-            // Save logic will go here later
+            var hotkeySounds = new List<HotkeySound>();
+            foreach (var sound in sounds)
+            {
+                if (sound is HotkeySound hs)
+                    hotkeySounds.Add(hs);
+            }
+
+            string jsonString = JsonSerializer.Serialize(hotkeySounds, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, jsonString);
         }
 
-        public List<AudioSound> LoadProfile(string name)
+        public List<AudioSound> LoadProfile(string filePath)
         {
-            // Load logic will go here later
-            return new List<AudioSound>();
+            if (!File.Exists(filePath)) return new List<AudioSound>();
+
+            string jsonString = File.ReadAllText(filePath);
+            var loaded = JsonSerializer.Deserialize<List<HotkeySound>>(jsonString) ?? new List<HotkeySound>();
+            return new List<AudioSound>(loaded);
         }
     }
 }

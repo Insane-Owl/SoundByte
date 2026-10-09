@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Media;
+using System.Threading.Tasks;
 
 namespace SoundByte
 {
@@ -19,9 +21,19 @@ namespace SoundByte
             IsActive = false;
         }
 
-        public virtual void PlaySound()
+        public virtual async Task PlaySoundAsync()
         {
-            // Audio engine logic will go here later
+            if (string.IsNullOrWhiteSpace(FilePath)) return;
+
+            IsActive = true;
+            await Task.Run(() =>
+            {
+                using (SoundPlayer player = new SoundPlayer(FilePath))
+                {
+                    player.PlaySync();
+                }
+            });
+            IsActive = false;
         }
 
         public virtual void StopSound()

@@ -33,7 +33,7 @@ namespace SoundByte
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Volume
         {
-            get { return volume;  }
+            get { return volume; }
             set
             {
                 if (value >= 0 && value <= 100)
@@ -65,6 +65,7 @@ namespace SoundByte
 
 
         public event EventHandler EditRequested;
+        public event EventHandler PlayRequested;
 
         public SoundTile()
         {
@@ -79,6 +80,11 @@ namespace SoundByte
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             EditRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SoundTile_Click(object sender, EventArgs e)
+        {
+            PlayRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

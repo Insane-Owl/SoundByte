@@ -151,6 +151,7 @@
             btnLoadProfile.TabIndex = 3;
             btnLoadProfile.Text = "Load Profile";
             btnLoadProfile.UseVisualStyleBackColor = false;
+            btnLoadProfile.Click += BtnLoadProfile_Click;
             // 
             // btnStopAll
             // 
