@@ -71,6 +71,11 @@ namespace SoundByte
             InitializeComponent();
         }
 
+        public void ToggleIndicator(bool isPlaying)
+        {
+            pnlPlayingIndicator.Visible = isPlaying;
+        }
+
         private void SoundTile_Paint(object sender, PaintEventArgs e)
         {
             ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, Color.FromArgb(215, 215, 215), ButtonBorderStyle.Solid);

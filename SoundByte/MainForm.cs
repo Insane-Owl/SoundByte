@@ -45,9 +45,13 @@ namespace SoundByte
             {
                 if (newTile.Tag is AudioSound sound)
                 {
+                    if (!File.Exists(sound.FilePath)) { SendStatus($"File \"{sound.FilePath}\" missing", true); return; }
+                    newTile.ToggleIndicator(true);
                     await sound.PlaySoundAsync(trkMasterVolume.Value);
                 }
             };
+
+            newSound.PlaybackEnded += (s, e) => newTile.ToggleIndicator(false);
 
             flpSoundGrid.Controls.Add(newTile);
         }
