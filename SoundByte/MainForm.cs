@@ -257,5 +257,16 @@ namespace SoundByte
         {
             _soundManager.StopAll();
         }
+
+        private void BtnBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog() { Filter = "Audio Files|*.wav;*.mp3;*.m4a;*.aac;*.wma;*.flac" })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    txtFilePath.Text = ofd.FileName;
+                }
+            }
+        }
     }
 }

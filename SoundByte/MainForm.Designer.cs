@@ -336,6 +336,7 @@
             btnBrowse.TabIndex = 3;
             btnBrowse.Text = "Browse...";
             btnBrowse.UseVisualStyleBackColor = false;
+            btnBrowse.Click += BtnBrowse_Click;
             // 
             // txtFilePath
             // 
