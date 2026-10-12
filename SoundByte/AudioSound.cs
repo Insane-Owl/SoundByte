@@ -23,7 +23,7 @@ namespace SoundByte
         private MemoryStream _memoryStream;
         private RawSourceWaveStream _rawStream;
         private VolumeSampleProvider _volumeProvider;
-        private WasapiOut _player;
+        private WasapiPlayer _player;
 
         public event EventHandler PlaybackEnded;
 
@@ -53,7 +53,7 @@ namespace SoundByte
                 _rawStream = new RawSourceWaveStream(_memoryStream, _audioFormat);
                 _volumeProvider = new VolumeSampleProvider(_rawStream.ToSampleProvider());
 
-                _player = new WasapiOut(AudioClientShareMode.Shared, 50); // initializes WASAPI in shared mode (which lets multiple audios play at once) with a 50ms latency target
+                _player = new WasapiPlayerBuilder().WithEventSync().WithLatency(50).Build(); ; // initializes WASAPI in shared mode (which lets multiple audios play at once) with a 50ms latency target
                 _player.Init(_volumeProvider);
 
                 _player.PlaybackStopped += (s, e) =>
