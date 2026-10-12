@@ -45,7 +45,7 @@ namespace SoundByte
             {
                 if (newTile.Tag is AudioSound sound)
                 {
-                    await sound.PlaySoundAsync();
+                    await sound.PlaySoundAsync(trkMasterVolume.Value);
                 }
             };
 

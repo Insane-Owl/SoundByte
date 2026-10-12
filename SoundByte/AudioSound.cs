@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Media;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace SoundByte
 {
@@ -12,6 +13,9 @@ namespace SoundByte
         public string FilePath { get; set; }
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
+
+        private List<MediaPlayer> _activePlayers = new List<MediaPlayer>();
+        public event EventHandler PlaybackEnded;
 
         public AudioSound()
         {
@@ -27,24 +31,36 @@ namespace SoundByte
             IsActive = false;
         }
 
-        public virtual async Task PlaySoundAsync()
+        public virtual async Task PlaySoundAsync(int masterVolume)
         {
-            if (string.IsNullOrWhiteSpace(FilePath)) return;
+            if (!File.Exists(FilePath)) return;
 
             IsActive = true;
-            await Task.Run(() =>
+            MediaPlayer player = new MediaPlayer();
+            player.Open(new Uri(FilePath, UriKind.Absolute));
+            player.Volume = (VolumeLevel / 100.0) * (masterVolume / 100.0);
+            _activePlayers.Add(player);
+
+            player.MediaEnded += (s, e) =>
             {
-                using (SoundPlayer player = new SoundPlayer(FilePath))
+                _activePlayers.Remove(player);
+                if (_activePlayers.Count == 0)
                 {
-                    player.PlaySync();
+                    IsActive = false;
+                    PlaybackEnded?.Invoke(this, EventArgs.Empty);
                 }
-            });
-            IsActive = false;
+            };
+
+            player.Play();
+            await Task.CompletedTask;
         }
 
         public virtual void StopSound()
         {
-            // Audio engine logic will go here later
+            foreach (var player in _activePlayers) player.Stop();
+            _activePlayers.Clear();
+            IsActive = false;
+            PlaybackEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

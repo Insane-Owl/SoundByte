@@ -7,7 +7,7 @@ namespace SoundByte
 {
     public interface IPlayable
     {
-        Task PlaySoundAsync();
+        Task PlaySoundAsync(int masterVolume);
         void StopSound();
     }
 }
