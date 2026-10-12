@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace SoundByte
 {
@@ -16,6 +17,7 @@ namespace SoundByte
         public bool IsActive { get; set; }
 
         private List<WaveOut> _activePlayers = new List<WaveOut>();
+        private byte[] _cachedAudioData; // stores the file in RAM so it doesn't need to be read from disk each time it is played, which causes a large delay
         public event EventHandler PlaybackEnded;
 
         public AudioSound()
@@ -30,17 +32,24 @@ namespace SoundByte
             FilePath = path;
             VolumeLevel = 100;
             IsActive = false;
+
+            if (File.Exists(FilePath))
+            {
+                _cachedAudioData = File.ReadAllBytes(FilePath);
+            }
         }
 
         public virtual async Task PlaySoundAsync(int masterVolume)
         {
-            if (!File.Exists(FilePath)) return;
+            if (_cachedAudioData == null) return;
 
             IsActive = true;
-            AudioFileReader audioReader = new AudioFileReader(FilePath);
-            audioReader.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
+            MemoryStream memoryStream = new MemoryStream(_cachedAudioData);
+            StreamMediaFoundationReader audioReader = new StreamMediaFoundationReader(memoryStream);
+            VolumeSampleProvider volumeProvider = new VolumeSampleProvider(audioReader.ToSampleProvider());
+            volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
             WaveOut player = new WaveOut();
-            player.Init(audioReader);
+            player.Init(volumeProvider);
             _activePlayers.Add(player);
 
             player.PlaybackStopped += (s, e) =>
@@ -48,6 +57,7 @@ namespace SoundByte
                 _activePlayers.Remove(player);
                 player.Dispose();
                 audioReader.Dispose();
+                memoryStream.Dispose();
                 if (_activePlayers.Count == 0)
                 {
                     IsActive = false;

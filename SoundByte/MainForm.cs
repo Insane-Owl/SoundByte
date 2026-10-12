@@ -248,5 +248,10 @@ namespace SoundByte
         {
             SaveEditorChanges();
         }
+
+        private void btnStopAll_Click(object sender, EventArgs e)
+        {
+            _soundManager.StopAll();
+        }
     }
 }

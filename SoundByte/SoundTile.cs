@@ -81,7 +81,7 @@ namespace SoundByte
             EditRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        private void SoundTile_Click(object sender, EventArgs e)
+        private void SoundTile_MouseDown(object sender, MouseEventArgs e)
         {
             PlayRequested?.Invoke(this, EventArgs.Empty);
         }

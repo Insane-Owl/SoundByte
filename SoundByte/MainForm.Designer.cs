@@ -164,6 +164,7 @@
             btnStopAll.TabIndex = 5;
             btnStopAll.Text = "Stop All (F12)";
             btnStopAll.UseVisualStyleBackColor = false;
+            btnStopAll.Click += btnStopAll_Click;
             // 
             // tlpMasterVolumeControls
             // 

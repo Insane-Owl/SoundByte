@@ -45,7 +45,7 @@
             lblClipName.TabIndex = 1;
             lblClipName.Text = "Sound Name";
             lblClipName.TextAlign = ContentAlignment.MiddleCenter;
-            lblClipName.Click += SoundTile_Click;
+            lblClipName.MouseDown += SoundTile_MouseDown;
             // 
             // pnlPlayingIndicator
             // 
@@ -56,7 +56,7 @@
             pnlPlayingIndicator.Size = new Size(5, 80);
             pnlPlayingIndicator.TabIndex = 0;
             pnlPlayingIndicator.Visible = false;
-            pnlPlayingIndicator.Click += SoundTile_Click;
+            pnlPlayingIndicator.MouseDown += SoundTile_MouseDown;
             // 
             // lblHotkey
             // 
@@ -70,7 +70,7 @@
             lblHotkey.Text = "None";
             lblHotkey.TextAlign = ContentAlignment.MiddleCenter;
             lblHotkey.Visible = false;
-            lblHotkey.Click += SoundTile_Click;
+            lblHotkey.MouseDown += SoundTile_MouseDown;
             // 
             // btnEdit
             // 
@@ -98,8 +98,8 @@
             Controls.Add(pnlPlayingIndicator);
             Name = "SoundTile";
             Size = new Size(150, 80);
-            Click += SoundTile_Click;
             Paint += SoundTile_Paint;
+            MouseDown += SoundTile_MouseDown;
             ResumeLayout(false);
         }
 

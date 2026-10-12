@@ -28,7 +28,10 @@ namespace SoundByte
 
         public void StopAll()
         {
-            // Audio engine logic will go here later
+            foreach (var sound in SoundList)
+            {
+                sound.StopSound();
+            }
         }
     }
 }
