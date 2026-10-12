@@ -16,7 +16,7 @@ namespace SoundByte
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
 
-        private List<WaveOut> _activePlayers = new List<WaveOut>();
+        private WaveOut _activePlayer;
         private byte[] _cachedAudioData; // stores the file in RAM so it doesn't need to be read from disk each time it is played, which causes a large delay
         public event EventHandler PlaybackEnded;
 
@@ -43,6 +43,11 @@ namespace SoundByte
         {
             if (_cachedAudioData == null) return;
 
+            if (_activePlayer != null)
+            {
+                _activePlayer.Stop();
+            }
+
             IsActive = true;
             MemoryStream memoryStream = new MemoryStream(_cachedAudioData);
             StreamMediaFoundationReader audioReader = new StreamMediaFoundationReader(memoryStream);
@@ -50,16 +55,16 @@ namespace SoundByte
             volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
             WaveOut player = new WaveOut();
             player.Init(volumeProvider);
-            _activePlayers.Add(player);
+            _activePlayer = player;
 
             player.PlaybackStopped += (s, e) =>
             {
-                _activePlayers.Remove(player);
                 player.Dispose();
                 audioReader.Dispose();
                 memoryStream.Dispose();
-                if (_activePlayers.Count == 0)
+                if (_activePlayer == player)
                 {
+                    _activePlayer = null;
                     IsActive = false;
                     PlaybackEnded?.Invoke(this, EventArgs.Empty);
                 }
@@ -71,9 +76,9 @@ namespace SoundByte
 
         public virtual void StopSound()
         {
-            foreach (var player in _activePlayers.ToList())
+            if (_activePlayer != null)
             {
-                player.Stop();
+                _activePlayer.Stop();
             }
         }
     }
