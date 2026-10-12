@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using NAudio.CoreAudioApi;
 
 namespace SoundByte
 {
@@ -22,7 +23,7 @@ namespace SoundByte
         private MemoryStream _memoryStream;
         private RawSourceWaveStream _rawStream;
         private VolumeSampleProvider _volumeProvider;
-        private WaveOut _player;
+        private WasapiOut _player;
 
         public event EventHandler PlaybackEnded;
 
@@ -52,7 +53,7 @@ namespace SoundByte
                 _rawStream = new RawSourceWaveStream(_memoryStream, _audioFormat);
                 _volumeProvider = new VolumeSampleProvider(_rawStream.ToSampleProvider());
 
-                _player = new WaveOut();
+                _player = new WasapiOut(AudioClientShareMode.Shared, 50); // initializes WASAPI in shared mode (which lets multiple audios play at once) with a 50ms latency target
                 _player.Init(_volumeProvider);
 
                 _player.PlaybackStopped += (s, e) =>
@@ -71,13 +72,16 @@ namespace SoundByte
             if (_player == null) return;
 
             _volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
-            _rawStream.Position = 0;
 
             if (_player.PlaybackState != PlaybackState.Playing)
             {
-                IsActive = true;
-                _player.Play();
+                _player.Stop();
             }
+
+            _rawStream.Position = 0;
+
+            IsActive = true;
+            _player.Play();
 
             await Task.CompletedTask;
         }
