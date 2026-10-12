@@ -9,15 +9,21 @@ using NAudio.Wave.SampleProviders;
 
 namespace SoundByte
 {
-    public class AudioSound : IPlayable
+    public class AudioSound : IPlayable, IDisposable
     {
         public string ClipName { get; set; }
         public string FilePath { get; set; }
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
 
-        private WaveOut _activePlayer;
-        private byte[] _cachedAudioData; // stores the file in RAM so it doesn't need to be read from disk each time it is played, which causes a large delay
+        private byte[] _decodedAudioData; // decodes and stores the file in RAM so it doesn't need to be read from disk each time it is played, which causes a large delay
+        private WaveFormat _audioFormat;
+
+        private MemoryStream _memoryStream;
+        private RawSourceWaveStream _rawStream;
+        private VolumeSampleProvider _volumeProvider;
+        private WaveOut _player;
+
         public event EventHandler PlaybackEnded;
 
         public AudioSound()
@@ -35,51 +41,60 @@ namespace SoundByte
 
             if (File.Exists(FilePath))
             {
-                _cachedAudioData = File.ReadAllBytes(FilePath);
+                using (AudioFileReader reader = new AudioFileReader(FilePath))
+                {
+                    _audioFormat = reader.WaveFormat;
+                    _decodedAudioData = new byte[reader.Length];
+                    reader.Read(_decodedAudioData, 0, _decodedAudioData.Length);
+                }
+
+                _memoryStream = new MemoryStream(_decodedAudioData);
+                _rawStream = new RawSourceWaveStream(_memoryStream, _audioFormat);
+                _volumeProvider = new VolumeSampleProvider(_rawStream.ToSampleProvider());
+
+                _player = new WaveOut();
+                _player.Init(_volumeProvider);
+
+                _player.PlaybackStopped += (s, e) =>
+                {
+                    if (_rawStream.Position >= _rawStream.Length)
+                    {
+                        IsActive = false;
+                        PlaybackEnded?.Invoke(this, EventArgs.Empty);
+                    }
+                };
             }
         }
 
         public virtual async Task PlaySoundAsync(int masterVolume)
         {
-            if (_cachedAudioData == null) return;
+            if (_player == null) return;
 
-            if (_activePlayer != null)
+            _volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
+            _rawStream.Position = 0;
+
+            if (_player.PlaybackState != PlaybackState.Playing)
             {
-                _activePlayer.Stop();
+                IsActive = true;
+                _player.Play();
             }
 
-            IsActive = true;
-            MemoryStream memoryStream = new MemoryStream(_cachedAudioData);
-            StreamMediaFoundationReader audioReader = new StreamMediaFoundationReader(memoryStream);
-            VolumeSampleProvider volumeProvider = new VolumeSampleProvider(audioReader.ToSampleProvider());
-            volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
-            WaveOut player = new WaveOut();
-            player.Init(volumeProvider);
-            _activePlayer = player;
-
-            player.PlaybackStopped += (s, e) =>
-            {
-                player.Dispose();
-                audioReader.Dispose();
-                memoryStream.Dispose();
-                if (_activePlayer == player)
-                {
-                    _activePlayer = null;
-                    IsActive = false;
-                    PlaybackEnded?.Invoke(this, EventArgs.Empty);
-                }
-            };
-
-            player.Play();
             await Task.CompletedTask;
         }
 
         public virtual void StopSound()
         {
-            if (_activePlayer != null)
+            if (_player != null && _player.PlaybackState == PlaybackState.Playing)
             {
-                _activePlayer.Stop();
+                _player.Stop();
             }
+        }
+
+        public void Dispose()
+        {
+            _player?.Dispose();
+            _rawStream?.Dispose();
+            _memoryStream?.Dispose();
         }
     }
 }
