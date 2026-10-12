@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Linq;
+using NAudio.Wave;
 
 namespace SoundByte
 {
@@ -14,7 +15,7 @@ namespace SoundByte
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
 
-        private List<MediaPlayer> _activePlayers = new List<MediaPlayer>();
+        private List<WaveOut> _activePlayers = new List<WaveOut>();
         public event EventHandler PlaybackEnded;
 
         public AudioSound()
@@ -36,14 +37,17 @@ namespace SoundByte
             if (!File.Exists(FilePath)) return;
 
             IsActive = true;
-            MediaPlayer player = new MediaPlayer();
-            player.Open(new Uri(FilePath, UriKind.Absolute));
-            player.Volume = (VolumeLevel / 100.0) * (masterVolume / 100.0);
+            AudioFileReader audioReader = new AudioFileReader(FilePath);
+            audioReader.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
+            WaveOut player = new WaveOut();
+            player.Init(audioReader);
             _activePlayers.Add(player);
 
-            player.MediaEnded += (s, e) =>
+            player.PlaybackStopped += (s, e) =>
             {
                 _activePlayers.Remove(player);
+                player.Dispose();
+                audioReader.Dispose();
                 if (_activePlayers.Count == 0)
                 {
                     IsActive = false;
@@ -57,10 +61,10 @@ namespace SoundByte
 
         public virtual void StopSound()
         {
-            foreach (var player in _activePlayers) player.Stop();
-            _activePlayers.Clear();
-            IsActive = false;
-            PlaybackEnded?.Invoke(this, EventArgs.Empty);
+            foreach (var player in _activePlayers.ToList())
+            {
+                player.Stop();
+            }
         }
     }
 }
