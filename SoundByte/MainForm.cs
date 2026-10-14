@@ -76,6 +76,11 @@ namespace SoundByte
             txtFilePath.Text = _currentlyEditingTile.FilePath;
             trkVolume.Value = _currentlyEditingTile.Volume;
             txtHotkey.Text = _currentlyEditingTile.Hotkey;
+
+            if (_currentlyEditingTile.Tag is HotkeySound sound)
+            {
+                txtHotkey.Tag = sound.RawKeyCode;
+            }
         }
 
         private void TestInit()
