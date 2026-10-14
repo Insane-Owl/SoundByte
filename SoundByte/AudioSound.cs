@@ -103,6 +103,10 @@ namespace SoundByte
                         {
                             IsActive = false;
                             _isStopping = false;
+                            Task.Run(() =>
+                            {
+                                PlaybackEnded?.Invoke(this, EventArgs.Empty);
+                            });
                         }
                     }
                 }
@@ -122,10 +126,6 @@ namespace SoundByte
                     if (IsActive && _position >= _audioSamples.Length && !_isStopping)
                     {
                         _isStopping = true;
-                        Task.Run(() =>
-                        {
-                            PlaybackEnded?.Invoke(this, EventArgs.Empty);
-                        });
                     }
                 }
             }
