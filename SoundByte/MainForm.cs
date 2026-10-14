@@ -178,9 +178,17 @@ namespace SoundByte
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtFilePath.Text))
+            if (!File.Exists(txtFilePath.Text))
             {
-                SendStatus("File Path cannot be blank", true);
+                SendStatus("File Path does not exist", true);
+                txtFilePath.Focus();
+                return false;
+            }
+
+            string[] validExtensions = { ".wav", ".mp3", ".m4a", ".aac", ".wma", ".flac" };
+            if (!validExtensions.Contains(Path.GetExtension(txtFilePath.Text).ToLower()))
+            {
+                SendStatus("Invalid audio file format", true);
                 txtFilePath.Focus();
                 return false;
             }
