@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using NAudio.CoreAudioApi;
 
 namespace SoundByte
 {
-    public class AudioSound : IPlayable, IDisposable
+    public class AudioSound : IPlayable, IDisposable, ISampleProvider
     {
         public string ClipName { get; set; }
         public string FilePath { get; set; }
         public int VolumeLevel { get; set; }
         public bool IsActive { get; set; }
 
-        private byte[] _decodedAudioData; // decodes and stores the file in RAM so it doesn't need to be read from disk each time it is played, which causes a large delay
-        private WaveFormat _audioFormat;
+        public WaveFormat WaveFormat { get; private set; }
 
-        private MemoryStream _memoryStream;
-        private RawSourceWaveStream _rawStream;
-        private VolumeSampleProvider _volumeProvider;
+        private float[] _audioSamples;
+        private int _position;
         private WasapiPlayer _player;
+        private int _currentMasterVolume = 100;
 
+        private float _currentFade = 0f;
+        private bool _isRestarting = false;
+        private bool _isStopping = false;
+        
         public event EventHandler PlaybackEnded;
 
         public AudioSound()
@@ -44,61 +44,125 @@ namespace SoundByte
             {
                 using (AudioFileReader reader = new AudioFileReader(FilePath))
                 {
-                    _audioFormat = reader.WaveFormat;
-                    _decodedAudioData = new byte[reader.Length];
-                    reader.Read(_decodedAudioData, 0, _decodedAudioData.Length);
+                    WaveFormat = reader.WaveFormat;
+                    List<float> samplesList = new List<float>((int)(reader.Length / 4));
+                    var readBuffer = new float[WaveFormat.SampleRate * WaveFormat.Channels];
+
+                    ISampleProvider sampleProvider = reader;
+                    int samplesRead;
+                    while ((samplesRead = sampleProvider.Read(readBuffer)) > 0)
+                    {
+                        for (int i = 0; i < samplesRead; i++)
+                        {
+                            samplesList.Add(readBuffer[i]);
+                        }
+                    }
+                    _audioSamples = samplesList.ToArray();
                 }
 
-                _memoryStream = new MemoryStream(_decodedAudioData);
-                _rawStream = new RawSourceWaveStream(_memoryStream, _audioFormat);
-                _volumeProvider = new VolumeSampleProvider(_rawStream.ToSampleProvider());
-
                 _player = new WasapiPlayerBuilder().WithEventSync().WithLatency(50).Build(); ; // initializes WASAPI in shared mode (which lets multiple audios play at once) with a 50ms latency target
-                _player.Init(_volumeProvider);
-
-                _player.PlaybackStopped += (s, e) =>
-                {
-                    if (_rawStream.Position >= _rawStream.Length)
-                    {
-                        IsActive = false;
-                        PlaybackEnded?.Invoke(this, EventArgs.Empty);
-                    }
-                };
+                _player.Init(this);
+                _player.Play();
             }
+        }
+
+        // I'm using the ISampleProvider interface now, so I have to implement this manually
+        // (╯°□°)╯︵ ┻━┻
+        public int Read(float[] buffer, int offset, int count)
+        {
+            return Read(new Span<float>(buffer, offset, count));
+        }
+
+        // This too
+        public int Read(Span<float> buffer)
+        {
+            if (_audioSamples == null)
+            {
+                buffer.Clear();
+                return buffer.Length;
+            }
+
+            float volume = (float)((VolumeLevel / 100.0) * (_currentMasterVolume / 100.0));
+            float fadeStep = 1f / (WaveFormat.SampleRate * WaveFormat.Channels * 0.01f);
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                if (_isStopping || _isRestarting)
+                {
+                    // fade sound out if stopping or restarting to fix the popping/crackling sound
+                    _currentFade = Math.Max(0f, _currentFade - fadeStep);
+                    if (_currentFade == 0f)
+                    {
+                        if (_isRestarting)
+                        {
+                            _position = 0;
+                            _isRestarting = false;
+                            IsActive = true;
+                        }
+                        else
+                        {
+                            IsActive = false;
+                            _isStopping = false;
+                        }
+                    }
+                }
+                else if (IsActive)
+                {
+                    _currentFade = Math.Min(1f, _currentFade + fadeStep);
+                }
+
+                if (IsActive && _position < _audioSamples.Length)
+                {
+                    buffer[i] = _audioSamples[_position] * volume * _currentFade;
+                    _position++;
+                }
+                else
+                {
+                    buffer[i] = 0f;
+                    if (IsActive && _position >= _audioSamples.Length && !_isStopping)
+                    {
+                        _isStopping = true;
+                        Task.Run(() =>
+                        {
+                            PlaybackEnded?.Invoke(this, EventArgs.Empty);
+                        });
+                    }
+                }
+            }
+
+            return buffer.Length;
         }
 
         public virtual async Task PlaySoundAsync(int masterVolume)
         {
-            if (_player == null) return;
+            if (_audioSamples == null) return;
+            _currentMasterVolume = masterVolume;
 
-            _volumeProvider.Volume = (float)((VolumeLevel / 100.0) * (masterVolume / 100.0));
-
-            if (_player.PlaybackState != PlaybackState.Playing)
+            if (IsActive)
             {
-                _player.Stop();
+                _isRestarting = true;
             }
-
-            _rawStream.Position = 0;
-
-            IsActive = true;
-            _player.Play();
+            else
+            {
+                _position = 0;
+                IsActive = true;
+            }
 
             await Task.CompletedTask;
         }
 
         public virtual void StopSound()
         {
-            if (_player != null && _player.PlaybackState == PlaybackState.Playing)
-            {
-                _player.Stop();
-            }
+            _isStopping = true;
         }
 
         public void Dispose()
         {
-            _player?.Dispose();
-            _rawStream?.Dispose();
-            _memoryStream?.Dispose();
+            if (_player != null)
+            {
+                _player.Stop();
+                _player.Dispose();
+            }
         }
     }
 }
