@@ -24,7 +24,7 @@ namespace SoundByte
             _globalHotkeyTimer = new System.Windows.Forms.Timer { Interval = 20 }; // 20ms polling rate
             _globalHotkeyTimer.Tick += GlobalHotkeyTimer_Tick;
             _globalHotkeyTimer.Start();
-            //TestInit();
+            //RunBackendTests();
         }
 
         private void BtnEditorClose_Click(object sender, EventArgs e)
@@ -81,12 +81,6 @@ namespace SoundByte
             {
                 txtHotkey.Tag = sound.RawKeyCode;
             }
-        }
-
-        private void TestInit()
-        {
-            for (int i = 0; i < 5; i++)
-                CreateTile("Test Sound " + (i + 1), "example_sound.mp3", 100, "");
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -199,7 +193,7 @@ namespace SoundByte
         private void RunBackendTests()
         {
             // Test constructors
-            HotkeySound testSound = new HotkeySound("Laser", "laser.wav", "F", 70);
+            HotkeySound testSound = new HotkeySound("Laser", "dummy.wav", "F", 70);
             SoundManager manager = new SoundManager();
 
             // Test adding a sound to the manager
