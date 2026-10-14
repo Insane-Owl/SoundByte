@@ -218,6 +218,9 @@ namespace SoundByte
                 {
                     flpSoundGrid.Controls.Clear();
                     _soundManager.SoundList.Clear();
+                    CloseEditor();
+                    _isCreatingNew = false;
+                    _currentlyEditingTile = null;
 
                     var loadedSounds = _profileManager.LoadProfile(ofd.FileName);
                     foreach (var sound in loadedSounds)
