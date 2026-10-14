@@ -12,6 +12,8 @@ namespace SoundByte
         public MainForm()
         {
             InitializeComponent();
+            this.KeyPreview = true; // for catching hotkeys
+            this.KeyDown += MainForm_KeyDown;
             _soundManager = new SoundManager();
             _profileManager = new ProfileManager();
             //TestInit();
@@ -265,6 +267,29 @@ namespace SoundByte
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     txtFilePath.Text = ofd.FileName;
+                }
+            }
+        }
+
+        private async void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F12)
+            {
+                _soundManager.StopAll();
+                return;
+            }
+
+            string keyString = e.KeyCode.ToString();
+            foreach (Control control in flpSoundGrid.Controls)
+            {
+                if (control is SoundTile tile && tile.Tag is HotkeySound hs)
+                {
+                    if (hs.HotkeyText.Equals(keyString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!File.Exists(hs.FilePath)) continue;
+                        tile.ToggleIndicator(true);
+                        await hs.PlaySoundAsync(_soundManager.MasterVolume);
+                    }
                 }
             }
         }
