@@ -219,7 +219,7 @@ namespace SoundByte
                     {
                         if (sound is HotkeySound hs)
                         {
-                            CreateTile(hs.ClipName, hs.FilePath, hs.VolumeLevel, hs.HotkeyText);
+                            CreateTile(hs.ClipName, hs.FilePath, hs.VolumeLevel, hs.HotkeyText, hs.RawKeyCode);
                         }
                     }
                     SendStatus($"Profile loaded from {ofd.FileName}");
