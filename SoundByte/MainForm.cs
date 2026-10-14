@@ -283,13 +283,13 @@ namespace SoundByte
 
         private void GlobalHotkeyTimer_Tick(object sender, EventArgs e)
         {
-            CheckKey(Keys.F12, () => _soundManager.StopAll());
+            CheckHotkeyCombo(Keys.F12, () => _soundManager.StopAll());
 
             foreach (Control control in flpSoundGrid.Controls)
             {
                 if (control is SoundTile tile && tile.Tag is HotkeySound hs && hs.RawKeyCode != 0)
                 {
-                    CheckKey((Keys)hs.RawKeyCode, async () =>
+                    CheckHotkeyCombo((Keys)hs.RawKeyCode, async () =>
                     {
                         if (File.Exists(hs.FilePath))
                         {
@@ -301,24 +301,54 @@ namespace SoundByte
             }
         }
 
-        private void CheckKey(Keys key, Action action)
+        private void CheckHotkeyCombo(Keys keyData, Action action)
         {
-            bool isPressed = (GetAsyncKeyState(key) & 0x8000) != 0;
+            Keys baseKey = keyData & Keys.KeyCode;
+            if (baseKey == Keys.None) return;
+
+            // check which (if any) modifiers are used
+            bool reqCtrl = (keyData & Keys.Control) == Keys.Control;
+            bool reqAlt = (keyData & Keys.Alt) == Keys.Alt;
+            bool reqShift = (keyData & Keys.Shift) == Keys.Shift;
+
+            // check what keys are being pressed
+            bool isBasePressed = (GetAsyncKeyState(baseKey) & 0x8000) != 0;
+            bool isCtrlPressed = (GetAsyncKeyState(Keys.ControlKey) & 0x8000) != 0;
+            bool isAltPressed = (GetAsyncKeyState(Keys.Menu) & 0x8000) != 0;
+            bool isShiftPressed = (GetAsyncKeyState(Keys.ShiftKey) & 0x8000) != 0;
+
+            bool isPressed = isBasePressed && (reqCtrl == isCtrlPressed) && (reqAlt == isAltPressed) && (reqShift == isShiftPressed);
 
             // only trigger if the key was pressed this tick and not last tick
-            if (isPressed && (!_keyStates.ContainsKey(key) || !_keyStates[key]))
+            if (isPressed && (!_keyStates.ContainsKey(keyData) || !_keyStates[keyData]))
             {
                 action.Invoke();
             }
 
-            _keyStates[key] = isPressed;
+            _keyStates[keyData] = isPressed;
         }
 
         private void TxtHotkey_KeyDown(object sender, KeyEventArgs e)
         {
-            txtHotkey.Text = e.KeyCode.ToString();
-            txtHotkey.Tag = (int)e.KeyCode;
             e.SuppressKeyPress = true;
+
+            // clear the hotkey
+            if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+            {
+                txtHotkey.Text = "";
+                txtHotkey.Tag = 0;
+                return;
+            }
+
+            // don't allow binding modifier keys (CTRL, ALT, SHIGT) by themselves, wait for another key
+            if (e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.ShiftKey || e.KeyCode == Keys.Menu)
+            {
+                return;
+            }
+
+            // store the full key combo
+            txtHotkey.Text = e.KeyData.ToString();
+            txtHotkey.Tag = (int)e.KeyData;
         }
     }
 }
