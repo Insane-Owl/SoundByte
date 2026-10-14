@@ -19,8 +19,6 @@ namespace SoundByte
         public MainForm()
         {
             InitializeComponent();
-            //this.KeyPreview = true; // for catching hotkeys
-            //this.KeyDown += MainForm_KeyDown;
             _soundManager = new SoundManager();
             _profileManager = new ProfileManager();
             _globalHotkeyTimer = new System.Windows.Forms.Timer { Interval = 20 }; // 20ms polling rate
@@ -283,47 +281,10 @@ namespace SoundByte
             }
         }
 
-        //private async void MainForm_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.F12)
-        //    {
-        //        _soundManager.StopAll();
-        //        return;
-        //    }
-
-        //    string keyString = e.KeyCode.ToString();
-        //    foreach (Control control in flpSoundGrid.Controls)
-        //    {
-        //        if (control is SoundTile tile && tile.Tag is HotkeySound hs)
-        //        {
-        //            if (hs.HotkeyText.Equals(keyString, StringComparison.OrdinalIgnoreCase))
-        //            {
-        //                if (!File.Exists(hs.FilePath)) continue;
-        //                tile.ToggleIndicator(true);
-        //                await hs.PlaySoundAsync(_soundManager.MasterVolume);
-        //            }
-        //        }
-        //    }
-        //}
-
         private void GlobalHotkeyTimer_Tick(object sender, EventArgs e)
         {
             CheckKey(Keys.F12, () => _soundManager.StopAll());
 
-            //foreach (Control control in flpSoundGrid.Controls)
-            //{
-            //    if (control is SoundTile tile && tile.Tag is HotkeySound hs && hs.RawKeyCode != 0)
-            //    {
-            //        CheckKey((Keys)hs.RawKeyCode, async () =>
-            //        {
-            //            if (File.Exists(hs.FilePath))
-            //            {
-            //                tile.ToggleIndicator(true);
-            //                await hs.PlaySoundAsync(_soundManager.MasterVolume);
-            //            }
-            //        });
-            //    }
-            //}
             foreach (Control control in flpSoundGrid.Controls)
             {
                 if (control is SoundTile tile && tile.Tag is HotkeySound hs && hs.RawKeyCode != 0)
