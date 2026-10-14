@@ -416,6 +416,7 @@
             txtHotkey.Name = "txtHotkey";
             txtHotkey.Size = new Size(138, 23);
             txtHotkey.TabIndex = 2;
+            txtHotkey.KeyDown += TxtHotkey_KeyDown;
             // 
             // flpFooter
             // 

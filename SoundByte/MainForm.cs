@@ -9,13 +9,23 @@ namespace SoundByte
         private SoundManager _soundManager;
         private ProfileManager _profileManager;
 
+        // for global hotkeys, that work even when the window isn't focused
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(Keys vKey);
+
+        private System.Windows.Forms.Timer _globalHotkeyTimer;
+        private Dictionary<Keys, bool> _keyStates = new Dictionary<Keys, bool>();
+
         public MainForm()
         {
             InitializeComponent();
-            this.KeyPreview = true; // for catching hotkeys
-            this.KeyDown += MainForm_KeyDown;
+            //this.KeyPreview = true; // for catching hotkeys
+            //this.KeyDown += MainForm_KeyDown;
             _soundManager = new SoundManager();
             _profileManager = new ProfileManager();
+            _globalHotkeyTimer = new System.Windows.Forms.Timer { Interval = 20 }; // 20ms polling rate
+            _globalHotkeyTimer.Tick += GlobalHotkeyTimer_Tick;
+            _globalHotkeyTimer.Start();
             //TestInit();
         }
 
@@ -29,9 +39,9 @@ namespace SoundByte
             pnlEditor.Visible = false;
         }
 
-        private void CreateTile(string name, string filePath, int volume, string hotkey)
+        private void CreateTile(string name, string filePath, int volume, string hotkey, int keyCode = 0)
         {
-            HotkeySound newSound = new HotkeySound(name, filePath, hotkey, 0);
+            HotkeySound newSound = new HotkeySound(name, filePath, hotkey, keyCode);
             newSound.VolumeLevel = volume;
             _soundManager.AddSound(newSound);
 
@@ -223,9 +233,11 @@ namespace SoundByte
         {
             if (!ValidateInput()) return;
 
+            int keyCode = txtHotkey.Tag != null ? (int)txtHotkey.Tag : 0;
+
             if (_isCreatingNew)
             {
-                CreateTile(txtClipName.Text, txtFilePath.Text, trkVolume.Value, txtHotkey.Text);
+                CreateTile(txtClipName.Text, txtFilePath.Text, trkVolume.Value, txtHotkey.Text, keyCode);
                 _isCreatingNew = false;
                 SendStatus($"Created \"{txtClipName.Text}\" successfully");
             }
@@ -243,7 +255,7 @@ namespace SoundByte
                     sound.ClipName = txtClipName.Text;
                     sound.FilePath = txtFilePath.Text;
                     sound.VolumeLevel = trkVolume.Value;
-                    sound.AssignHotkey(txtHotkey.Text, 0);
+                    sound.AssignHotkey(txtHotkey.Text, keyCode);
                 }
                 SendStatus($"Updated \"{txtClipName.Text}\" successfully");
             }
@@ -271,27 +283,81 @@ namespace SoundByte
             }
         }
 
-        private async void MainForm_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.F12)
-            {
-                _soundManager.StopAll();
-                return;
-            }
+        //private async void MainForm_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.F12)
+        //    {
+        //        _soundManager.StopAll();
+        //        return;
+        //    }
 
-            string keyString = e.KeyCode.ToString();
+        //    string keyString = e.KeyCode.ToString();
+        //    foreach (Control control in flpSoundGrid.Controls)
+        //    {
+        //        if (control is SoundTile tile && tile.Tag is HotkeySound hs)
+        //        {
+        //            if (hs.HotkeyText.Equals(keyString, StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                if (!File.Exists(hs.FilePath)) continue;
+        //                tile.ToggleIndicator(true);
+        //                await hs.PlaySoundAsync(_soundManager.MasterVolume);
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void GlobalHotkeyTimer_Tick(object sender, EventArgs e)
+        {
+            CheckKey(Keys.F12, () => _soundManager.StopAll());
+
+            //foreach (Control control in flpSoundGrid.Controls)
+            //{
+            //    if (control is SoundTile tile && tile.Tag is HotkeySound hs && hs.RawKeyCode != 0)
+            //    {
+            //        CheckKey((Keys)hs.RawKeyCode, async () =>
+            //        {
+            //            if (File.Exists(hs.FilePath))
+            //            {
+            //                tile.ToggleIndicator(true);
+            //                await hs.PlaySoundAsync(_soundManager.MasterVolume);
+            //            }
+            //        });
+            //    }
+            //}
             foreach (Control control in flpSoundGrid.Controls)
             {
-                if (control is SoundTile tile && tile.Tag is HotkeySound hs)
+                if (control is SoundTile tile && tile.Tag is HotkeySound hs && hs.RawKeyCode != 0)
                 {
-                    if (hs.HotkeyText.Equals(keyString, StringComparison.OrdinalIgnoreCase))
+                    CheckKey((Keys)hs.RawKeyCode, async () =>
                     {
-                        if (!File.Exists(hs.FilePath)) continue;
-                        tile.ToggleIndicator(true);
-                        await hs.PlaySoundAsync(_soundManager.MasterVolume);
-                    }
+                        if (File.Exists(hs.FilePath))
+                        {
+                            tile.ToggleIndicator(true);
+                            await hs.PlaySoundAsync(_soundManager.MasterVolume);
+                        }
+                    });
                 }
             }
+        }
+
+        private void CheckKey(Keys key, Action action)
+        {
+            bool isPressed = (GetAsyncKeyState(key) & 0x8000) != 0;
+
+            // only trigger if the key was pressed this tick and not last tick
+            if (isPressed && (!_keyStates.ContainsKey(key) || !_keyStates[key]))
+            {
+                action.Invoke();
+            }
+
+            _keyStates[key] = isPressed;
+        }
+
+        private void TxtHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            txtHotkey.Text = e.KeyCode.ToString();
+            txtHotkey.Tag = (int)e.KeyCode;
+            e.SuppressKeyPress = true;
         }
     }
 }
