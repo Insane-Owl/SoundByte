@@ -257,20 +257,37 @@ namespace SoundByte
             }
             else if (_currentlyEditingTile != null)
             {
+                if (_currentlyEditingTile.Tag is HotkeySound oldSound)
+                {
+                    if (oldSound.FilePath != txtFilePath.Text)
+                    {   
+                        // delete and re-create the backend sound to change the cached file, if the file path was changed
+                        _soundManager.RemoveSound(oldSound);
+                        oldSound.Dispose();
+
+                        HotkeySound newSound = new HotkeySound(txtClipName.Text, txtFilePath.Text, txtHotkey.Text, keyCode);
+                        newSound.VolumeLevel = trkVolume.Value;
+                        _soundManager.AddSound(newSound);
+
+                        newSound.PlaybackEnded += (s, e) => _currentlyEditingTile.ToggleIndicator(false);
+                        _currentlyEditingTile.Tag = newSound;
+                    }
+                    else
+                    {
+
+                        // the file path didn't change, so just update the properties
+                        oldSound.ClipName = txtClipName.Text;
+                        oldSound.VolumeLevel = trkVolume.Value;
+                        oldSound.AssignHotkey(txtHotkey.Text, keyCode);
+                    }
+                }
+
                 // update UI tile
                 _currentlyEditingTile.ClipName = txtClipName.Text;
                 _currentlyEditingTile.FilePath = txtFilePath.Text;
                 _currentlyEditingTile.Volume = trkVolume.Value;
                 _currentlyEditingTile.Hotkey = txtHotkey.Text;
 
-                // update backend
-                if (_currentlyEditingTile.Tag is HotkeySound sound)
-                {
-                    sound.ClipName = txtClipName.Text;
-                    sound.FilePath = txtFilePath.Text;
-                    sound.VolumeLevel = trkVolume.Value;
-                    sound.AssignHotkey(txtHotkey.Text, keyCode);
-                }
                 SendStatus($"Updated \"{txtClipName.Text}\" successfully");
             }
             CloseEditor();
